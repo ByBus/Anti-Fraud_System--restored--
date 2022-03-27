@@ -12,6 +12,7 @@ public class UserConverter implements Converter<UserEntity, UserDTO> {
                 .id(entity.getId())
                 .name(entity.getName())
                 .username(entity.getUsername())
+                .role(entity.getRole().name())
                 .build();
     }
 
