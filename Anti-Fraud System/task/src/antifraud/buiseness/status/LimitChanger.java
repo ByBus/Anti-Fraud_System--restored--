@@ -3,12 +3,12 @@ package antifraud.buiseness.status;
 import antifraud.persistance.StatusRepositoryService;
 import antifraud.persistance.entity.TransactionStatusEntity;
 
+import java.util.function.BiFunction;
+
 public abstract class LimitChanger {
     private final StatusRepositoryService statusRepository;
     private final TransactionStatus status;
     private LimitChanger next;
-    private static final int DECREASE_LIMIT_VALUE = 1;
-    private static final int INCREASE_LIMIT_VALUE = 2;
 
     public LimitChanger(StatusRepositoryService statusRepository, TransactionStatus status) {
         this.statusRepository = statusRepository;
@@ -22,7 +22,8 @@ public abstract class LimitChanger {
 
     private void changeLimitIfStatusDESCDirection(TransactionStatus from, TransactionStatus to, long transactionAmount) {
         if (status.getPriority() < from.getPriority() && status.getPriority() >= to.getPriority()) {
-            updateLimit(transactionAmount, INCREASE_LIMIT_VALUE);
+            BiFunction<Long, Long, Long> calculationMethod = this::calculateIncreasedLimit;
+            updateLimit(transactionAmount, calculationMethod);
         }
         if (next != null) {
             next.changeLimitIfStatusDESCDirection(from, to, transactionAmount);
@@ -31,18 +32,17 @@ public abstract class LimitChanger {
 
     private void changeLimitIfStatusASCDirection(TransactionStatus from, TransactionStatus to, long transactionAmount) {
         if (status.getPriority() >= from.getPriority() && status.getPriority() < to.getPriority()) {
-            updateLimit(transactionAmount, DECREASE_LIMIT_VALUE);
+            BiFunction<Long, Long, Long> calculationMethod = this::calculateDecreasedLimit;
+            updateLimit(transactionAmount, calculationMethod);
         }
         if (next != null) {
             next.changeLimitIfStatusASCDirection(from, to, transactionAmount);
         }
     }
 
-    private void updateLimit(long transactionAmount, int limitOperationType) {
+    private void updateLimit(long transactionAmount, BiFunction<Long, Long, Long> limitCalculationMethod) {
         TransactionStatusEntity current = statusRepository.get(status);
-        long newLimit = limitOperationType == DECREASE_LIMIT_VALUE
-                ? calculateDecreasedLimit(current.getMaxAmount(), transactionAmount)
-                : calculateIncreasedLimit(current.getMaxAmount(), transactionAmount);
+        long newLimit = limitCalculationMethod.apply(current.getMaxAmount(), transactionAmount);
         current.setMaxAmount(newLimit);
         statusRepository.update(current);
     }
