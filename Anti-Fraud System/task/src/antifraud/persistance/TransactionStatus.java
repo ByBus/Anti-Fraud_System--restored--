@@ -1,4 +1,4 @@
-package antifraud;
+package antifraud.persistance;
 
 import lombok.Getter;
 

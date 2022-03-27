@@ -1,4 +1,4 @@
-package antifraud;
+package antifraud.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
