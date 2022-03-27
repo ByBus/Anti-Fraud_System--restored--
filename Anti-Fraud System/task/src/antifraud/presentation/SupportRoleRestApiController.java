@@ -1,6 +1,7 @@
 package antifraud.presentation;
 
 import antifraud.buiseness.Converter;
+import antifraud.buiseness.Regexes;
 import antifraud.model.StatusDTO;
 import antifraud.model.StolenCreditCardDTO;
 import antifraud.model.SuspiciousIpDTO;
@@ -43,7 +44,7 @@ public class SupportRoleRestApiController {
 
     @DeleteMapping("/api/antifraud/suspicious-ip/{ip}")
     public StatusDTO.IpRemoved deleteSuspiciousIP(@PathVariable @Valid
-                                                  @Pattern(regexp = "((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}",
+                                                  @Pattern(regexp = Regexes.IP_FORMAT,
                                                           message = "Wrong ip format!")
                                                           String ip) {
         repository.deleteSuspiciousIp(ip);

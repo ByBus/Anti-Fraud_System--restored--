@@ -8,6 +8,7 @@ import antifraud.persistance.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,14 +16,17 @@ public class RepositoryService {
     private final UserRepository userRepository;
     private final SuspiciousIPRepository ipRepository;
     private final StolenCreditCardRepository stolenCardRepository;
+    private final TransactionHistoryRepository transactionHistoryRepository;
 
     @Autowired
     public RepositoryService(UserRepository userRepository,
                              SuspiciousIPRepository ipRepository,
-                             StolenCreditCardRepository stolenCardRepository) {
+                             StolenCreditCardRepository stolenCardRepository,
+                             TransactionHistoryRepository transactionHistoryRepository) {
         this.userRepository = userRepository;
         this.ipRepository = ipRepository;
         this.stolenCardRepository = stolenCardRepository;
+        this.transactionHistoryRepository = transactionHistoryRepository;
     }
 
     public UserEntity create(UserEntity userEntity) {
@@ -48,7 +52,7 @@ public class RepositoryService {
 
     public UserEntity findUser(String username) {
         return userRepository.findByUsernameIgnoreCase(username)
-                .orElseThrow(UserNotFound::new);
+                .orElseThrow(UserNotFoundException::new);
     }
 
     public void update(UserEntity userEntity) {
@@ -98,4 +102,33 @@ public class RepositoryService {
     public List<StolenCreditCardEntity> getAllStolenCards() {
         return (List<StolenCreditCardEntity>) stolenCardRepository.findAll();
     }
+
+    public TransactionEntity saveTransactionToHistory(TransactionEntity transactionEntity) {
+        return transactionHistoryRepository.save(transactionEntity);
+    }
+
+    public List<TransactionEntity> getTransactionsOfCardFromOtherRegionInTimeInterval(String cardNumber,
+                                                                                      WorldRegion excludedRegion,
+                                                                                      LocalDateTime startOfInterval,
+                                                                                      LocalDateTime endOfInterval) {
+        return transactionHistoryRepository.findAllByNumberAndRegionNotAndDateBetween(
+                cardNumber,
+                excludedRegion,
+                startOfInterval,
+                endOfInterval
+        );
+    }
+
+    public List<TransactionEntity> getTransactionsOfCardFromOtherIpInTimeInterval(String cardNumber,
+                                                                                  String excludedIp,
+                                                                                  LocalDateTime startOfInterval,
+                                                                                  LocalDateTime endOfInterval) {
+        return transactionHistoryRepository.findAllByNumberAndIpNotAndDateBetween(
+                cardNumber,
+                excludedIp,
+                startOfInterval,
+                endOfInterval
+        );
+    }
+
 }

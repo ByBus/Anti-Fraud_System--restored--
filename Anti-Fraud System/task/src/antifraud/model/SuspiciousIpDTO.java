@@ -1,5 +1,6 @@
 package antifraud.model;
 
+import antifraud.buiseness.Regexes;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -12,6 +13,6 @@ public class SuspiciousIpDTO {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private long id;
     @NonNull
-    @Pattern(regexp = "((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)(\\.(?!$)|$)){4}", message = "Wrong ip format!")
+    @Pattern(regexp = Regexes.IP_FORMAT, message = "Wrong ip format!")
     private String ip;
 }

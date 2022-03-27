@@ -3,9 +3,8 @@ package antifraud.presentation;
 import antifraud.auth.Operation;
 import antifraud.auth.Role;
 import antifraud.buiseness.Converter;
-import antifraud.buiseness.TransactionStatusResolver;
 import antifraud.exception.BadRequestException;
-import antifraud.exception.RoleIsAlreadyProvided;
+import antifraud.exception.RoleIsAlreadyProvidedException;
 import antifraud.model.*;
 import antifraud.persistance.RepositoryService;
 import antifraud.persistance.entity.UserEntity;
@@ -26,22 +25,14 @@ public class UserApiController {
     private final RepositoryService repository;
     private final Converter<UserEntity, UserDTO> userConverter;
     private final PasswordEncoder passwordEncoder;
-    private final TransactionStatusResolver statusResolver;
 
     @Autowired
     public UserApiController(RepositoryService repository,
                              Converter<UserEntity, UserDTO> userConverter,
-                             PasswordEncoder passwordEncoder,
-                             TransactionStatusResolver statusResolver) {
+                             PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.userConverter = userConverter;
         this.passwordEncoder = passwordEncoder;
-        this.statusResolver = statusResolver;
-    }
-
-    @PostMapping("/api/antifraud/transaction")
-    public ResultDTO acceptTransaction(@RequestBody @Valid TransactionDTO transactionDTO) {
-        return statusResolver.resolve(transactionDTO);
     }
 
     @PostMapping("/api/auth/user")
@@ -72,7 +63,7 @@ public class UserApiController {
             throw new BadRequestException("Operation not allowed!");
         }
         if (userEntity.getRole() == newRole) {
-            throw new RoleIsAlreadyProvided();
+            throw new RoleIsAlreadyProvidedException();
         }
         userEntity.setRole(newRole);
         repository.update(userEntity);
