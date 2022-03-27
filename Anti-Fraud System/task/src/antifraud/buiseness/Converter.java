@@ -1,7 +1,3 @@
 package antifraud.buiseness;
 
-public interface Converter<T, U> {
-    U toDTO(T entity);
-
-    T toEntity(U dto);
-}
+public interface Converter<E, D> extends DTOMapper<E, D>, EntityMapper<D, E> { }

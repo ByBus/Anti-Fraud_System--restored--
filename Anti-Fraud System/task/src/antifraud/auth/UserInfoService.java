@@ -1,6 +1,6 @@
 package antifraud.auth;
 
-import antifraud.persistance.UserEntity;
+import antifraud.persistance.entity.UserEntity;
 import antifraud.persistance.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

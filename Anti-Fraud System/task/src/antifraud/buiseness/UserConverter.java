@@ -1,7 +1,7 @@
 package antifraud.buiseness;
 
 import antifraud.model.UserDTO;
-import antifraud.persistance.UserEntity;
+import antifraud.persistance.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Component

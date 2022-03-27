@@ -1,4 +1,4 @@
-package antifraud.persistance;
+package antifraud.persistance.entity;
 
 import antifraud.auth.Role;
 import lombok.*;
