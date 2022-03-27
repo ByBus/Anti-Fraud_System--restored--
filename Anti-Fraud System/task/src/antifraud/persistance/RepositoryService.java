@@ -2,6 +2,7 @@ package antifraud.persistance;
 
 import antifraud.auth.Role;
 import antifraud.exception.*;
+import antifraud.model.TransactionDTO;
 import antifraud.persistance.entity.StolenCreditCardEntity;
 import antifraud.persistance.entity.SuspiciousIPEntity;
 import antifraud.persistance.entity.UserEntity;
@@ -131,4 +132,21 @@ public class RepositoryService {
         );
     }
 
+    public TransactionEntity getTransaction(long id) {
+        return transactionHistoryRepository.findById(id)
+                .orElseThrow(TransactionNotFoundException::new);
+    }
+
+    public List<TransactionEntity> getAllTransactionsFromHistory() {
+        return transactionHistoryRepository.findAllByOrderByIdAsc();
+    }
+
+    public List<TransactionEntity> getTransactionsByCardNumber(String number) {
+        var transactionEntities = transactionHistoryRepository
+                .findAllByNumber(number);
+        if (transactionEntities.isEmpty()) {
+            throw new TransactionNotFoundException();
+        }
+        return transactionEntities;
+    }
 }

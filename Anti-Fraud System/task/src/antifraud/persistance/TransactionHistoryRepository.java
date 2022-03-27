@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 interface TransactionHistoryRepository extends CrudRepository<TransactionEntity, Long> {
@@ -21,4 +22,8 @@ interface TransactionHistoryRepository extends CrudRepository<TransactionEntity,
             LocalDateTime publicationDateStart,
             LocalDateTime publicationDateEnd
     );
+
+    List<TransactionEntity> findAllByOrderByIdAsc();
+
+    List<TransactionEntity> findAllByNumber(String number);
 }

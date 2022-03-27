@@ -1,10 +1,7 @@
 package antifraud.persistance;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import antifraud.buiseness.status.TransactionStatus;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -19,7 +16,7 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NonNull
-    private long amount;
+    private Long amount;
     @NonNull
     private String ip;
     @NonNull
@@ -31,4 +28,5 @@ public class TransactionEntity {
     private LocalDateTime date;
     @Enumerated(EnumType.STRING)
     private TransactionStatus status = TransactionStatus.PROHIBITED;
+    private TransactionStatus feedback;
 }
